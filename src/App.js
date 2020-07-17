@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import './App.less';
-import Search from './components/search/search.jsx'
-import Main from './components/main/main.jsx'
+
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import routes from './config/routes.js'
 import NotMatch from './pages/not_match/notmatch.jsx'

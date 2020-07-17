@@ -12,9 +12,12 @@ axios.defaults.baseURL = `http://192.168.1.149:7878`
 axios.interceptors.request.use(
   (config) => {
 
-    if (config.method === 'POST') {
-      config.data = qs.stringify(config.data)
+    // 获取config对象中的data参数
+    let data = config.data
+    if (data && data instanceof Object) {
+      config.data = qs.stringify(data)
     }
+
     // config.headers.authorization ='Bearer '+ token
     return config
   },

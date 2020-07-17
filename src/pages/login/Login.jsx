@@ -1,68 +1,86 @@
 import React, { Component } from 'react'
 import './Login.less'
-import { Form, Input, Button, Checkbox, message } from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { Form, Icon, Input, Button, Checkbox } from 'antd';
+import { reqLogin } from '../../api/index.js'
+import { setItem, getItem, removeItem } from '../../utils/storage.js'
 
+@Form.create()
 class Login extends Component {
-  onFinish = values => {
-    console.log('Received values of form: ', values);
+  handleSubmit = e => {
+    e.preventDefault();
+    this.props.form.validateFields(async (err, values) => {
+      if (!err) {
+        console.log('Received values  ', values);
+        const req = await reqLogin(values.uid, values.pwd)
+        if (req.data.isSuccess) {
+          setItem("token", req.data.body)
+          if (values.rem) {
+            setItem("uid", values.uid)
+            setItem("pwd", values.pwd)
+          } else {
+            removeItem("uid")
+            removeItem("pwd")
+          }
+        }
+
+      }
+    });
   };
-  onFinishFailed = errorInfo => {
-    message.error('请填写完成表单');
-  };
+  componentDidMount () {
+    if (getItem("pwd")) {
+      this.props.form.setFieldsValue({
+        rem: true,
+        uid: getItem("uid"),
+        pwd: getItem("pwd")
+      })
+    }
+  }
   render () {
+    const { getFieldDecorator } = this.props.form;
     return (
       <div className="login">
         <div className="loginFrom">
-          <Form
-            name="normal_login"
-            className="login-form"
-            initialValues={{
-              remember: false,
-            }}
-            onFinish={this.onFinish}
-            onFinishFailed={this.onFinishFailed}
-          >
-            <Form.Item
-              name="username"
-              rules={[
-                { required: true, whitespace: true, message: '请输入用户名' },
-                { min: 5, message: '用户名必须大于5位' },
-                { max: 12, message: '用户名必须小于12位' },
-                { pattern: /^[a-zA-Z0-9_]+$/, message: '用户名只能包含英文、数字、下划线' }
-              ]}
-            >
-              <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="用户名" />
-            </Form.Item>
-            <Form.Item
-              name="password"
-              rules={[
-                { required: true, whitespace: true, message: '请输入密码' },
-                { min: 6, message: '用户名必须大于5位' },
-                { max: 10, message: '用户名必须小于12位' },
-                { pattern: /^[a-zA-Z0-9_]+$/, message: '用户名只能包含英文、数字、下划线' }
-              ]}
-            >
-              <Input
-                prefix={<LockOutlined className="site-form-item-icon" />}
-                type="password"
-                placeholder="密码"
-              />
+          <Form onSubmit={this.handleSubmit} className="login-form">
+            <Form.Item>
+              {getFieldDecorator('uid', {
+                rules: [{ required: true, message: '请输入用户名!' }],
+              })(
+                <Input
+                  prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                  placeholder="请输入用户名"
+                />,
+              )}
             </Form.Item>
             <Form.Item>
-              <Form.Item name="remember" valuePropName="checked" noStyle>
-                <Checkbox>记住密码</Checkbox>
-              </Form.Item>
-
+              {getFieldDecorator('pwd', {
+                rules: [
+                  { required: true, message: '请输入密码!' },
+                  { min: 6, message: '必须是大于6位' },
+                  { max: 18, message: '必须是小于10位' },
+                  { pattern: /^[0-9a-zA-Z_]+$/, message: '只能输入数字、字母、下划线' }
+                ],
+              })(
+                <Input
+                  prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                  type="password"
+                  placeholder="请输入密码"
+                />,
+              )}
+            </Form.Item>
+            <Form.Item>
+              {getFieldDecorator('rem', {
+                valuePropName: 'checked',
+                initialValue: false,
+              })(<Checkbox>记住密码</Checkbox>)}
               <a className="login-form-forgot" href="">
                 忘记密码
-              </a>
-            </Form.Item>
+          </a>
 
+            </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit" className="login-form-button">
                 登录
-        </Button>
+          </Button>
               <a className="register" href="">注册</a>
             </Form.Item>
           </Form>
