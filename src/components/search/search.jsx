@@ -1,8 +1,8 @@
-import "./search.css"
+import "./search.less"
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { updateSearch } from '../../redux/action-creators'
-
+import { Button } from 'antd'
 class Search extends Component {
 
   search = () => {
@@ -18,7 +18,7 @@ class Search extends Component {
         <h3 className="jumbotron-heading">Search Github Users</h3>
         <div>
           <input type="text" placeholder="enter" ref="content" />
-          <button onClick={this.search}>Search</button>
+          <Button type="primary" onClick={this.search}>Search</Button>
         </div>
       </section >
     )

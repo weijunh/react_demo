@@ -1,7 +1,8 @@
-import "./main.css"
+import "./main.less"
 import { connect } from 'react-redux'
 import React, { Component } from 'react'
 import axios from 'axios'
+
 
 class Main extends Component {
   state = {
