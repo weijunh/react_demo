@@ -1,9 +1,16 @@
 import React, { Component } from 'react'
 import './Login.less'
-import { Form, Icon, Input, Button, Checkbox } from 'antd';
+import { Form, Icon, Input, Button, Checkbox, message } from 'antd';
 import { reqLogin } from '../../api/index.js'
 import { setItem, getItem, removeItem } from '../../utils/storage.js'
+import { connect } from 'react-redux';
+import { saveUser } from '../../redux/action-creators.js'
 
+
+
+@connect(null, {
+  saveUser
+})
 @Form.create()
 class Login extends Component {
   handleSubmit = e => {
@@ -14,6 +21,8 @@ class Login extends Component {
         const req = await reqLogin(values.uid, values.pwd)
         if (req.data.isSuccess) {
           setItem("token", req.data.body)
+          // token保存到redux中
+          this.props.saveUser(req.data.body)
           if (values.rem) {
             setItem("uid", values.uid)
             setItem("pwd", values.pwd)
@@ -21,11 +30,15 @@ class Login extends Component {
             removeItem("uid")
             removeItem("pwd")
           }
+          message.success('登录成功');
+          // this.props.history.replace('/')
+        } else {
+          message.error('网路错误')
         }
-
       }
     });
   };
+
   componentDidMount () {
     if (getItem("pwd")) {
       this.props.form.setFieldsValue({
@@ -85,6 +98,7 @@ class Login extends Component {
             </Form.Item>
           </Form>
         </div>
+
       </div>
     )
   }

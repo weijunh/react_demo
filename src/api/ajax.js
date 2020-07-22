@@ -6,8 +6,8 @@ import qs from 'qs'
 axios.defaults.timeout = 8000
 axios.defaults.headers = { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }
 
-// 设置基本的地址路径
-axios.defaults.baseURL = `http://192.168.1.149:7878`
+// 设置基本的服务器地址路径
+axios.defaults.baseURL = `http://192.168.1.75:7878`
 // 请求拦截器
 axios.interceptors.request.use(
   (config) => {
@@ -17,14 +17,12 @@ axios.interceptors.request.use(
     if (data && data instanceof Object) {
       config.data = qs.stringify(data)
     }
-
     // config.headers.authorization ='Bearer '+ token
     return config
   },
   (error) => {
     return Promise.reject(error);
   }
-
 )
 
 // 响应拦截器

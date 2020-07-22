@@ -4,7 +4,7 @@
   overflow: hidden;
   background-image: url('./images/bd.jpg');
   background-size: 100% 100%;
-
+  position: relative;
   .loginFrom {
     width: 400px;
     height: 400px;
@@ -23,5 +23,16 @@
         float: right;
       }
     }
+  }
+  .imageCodeShow {
+    display: block;
+    position: absolute;
+    z-index: 9999;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .imageCodehidden {
+    display: none;
   }
 }
